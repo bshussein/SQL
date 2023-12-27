@@ -1,0 +1,35 @@
+CREATE TABLE Actors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    age INTEGER);
+ INSERT INTO Actors (name, age)
+    VALUES ("Will Smith", 55);
+INSERT INTO Actors (name, age)
+    VALUES ("Martin Lawrence", 58);
+INSERT INTO Actors (name, age)
+    VALUES ("Eddie Murphy", 62);
+INSERT INTO Actors (name, age)
+    VALUES ("Tom Cruise", 61);
+INSERT INTO Actors (name, age)
+    VALUES ("Keanu Reeves", 59);
+
+CREATE TABLE Genres (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    genre TEXT,  
+    years_acting INTEGER);
+INSERT INTO Genres (genre, years_acting)
+    VALUES ("Comedy", 38);
+INSERT INTO Genres (genre, years_acting)
+    VALUES ("Comedy", 36);
+INSERT INTO Genres (genre, years_acting)
+    VALUES ("Comedy", 43);
+INSERT INTO Genres (genre, years_acting)
+    VALUES ("Action", 42);
+INSERT INTO Genres (genre, years_acting)
+    VALUES ("Action", 38);
+    
+#Use the join clause to combine both tables.
+select Actors.name, Genres.genre
+from Actors
+join Genres
+on Actors.id = Genres.id;
