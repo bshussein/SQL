@@ -1,0 +1,75 @@
+# In this project, I obtained Spotify data from Kaggle, imported it into a table, and conducted analytics using SQL.
+
+# Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+# Then I inserted the Spotify Data .csv into the table.
+
+# Analysis 
+
+# Which songs from the Spotify dataset have a popularity rating exceeding 90 and a danceability score greater than 0.7?
+
+SELECT artist_name, track_name, popularity, danceability
+FROM BIT_DB.Spotifydata
+WHERE Popularity > 90 
+AND danceability > 0.7;
+
+# Which songs have the least and most popularity, respectively, based on the Spotify dataset?
+
+SELECT artist_name, track_name, MIN(popularity) as least_popular
+FROM BIT_DB.Spotifydata;
+
+SELECT artist_name, track_name, MAX(popularity) as most_popular
+FROM BIT_DB.Spotifydata;
+
+# What are the average values for popularity, danceability, and energy across all tracks for each artist in the Spotify dataset?
+
+SELECT artist_name, AVG(popularity), AVG(danceability), AVG(energy)
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name;
+
+# Which songs, based on the Spotify dataset, have the highest popularity, and what are the artist names and track names of the top 5?
+
+SELECT artist_name, track_name, popularity 
+FROM BIT_DB.Spotifydata
+ORDER BY popularity DESC
+LIMIT 5;
+
+# Which songs, based on the Spotify dataset, have the highest tempos, and what are the artist names and track names of the top 5?
+
+SELECT artist_name, track_name, tempo 
+FROM BIT_DB.Spotifydata
+ORDER BY tempo DESC
+LIMIT 5;
+
+# Which songs, according to the Spotify dataset, have a duration of 4 minutes when converted from milliseconds to minutes?
+
+SELECT artist_name, track_name, duration_ms 
+, duration_ms / (1000 * 60) as duration_minutes
+FROM BIT_DB.Spotifydata
+WHERE duration_minutes = 4;
+
+# Which songs, based on the Spotify dataset, have a popularity score less than 80?
+
+SELECT artist_name, track_name, popularity
+FROM BIT_DB.Spotifydata
+WHERE popularity < 80
