@@ -1,0 +1,113 @@
+# This dataset comprises various tables containing details on invoices, tracks, albums, artists, genres, employees, and customer information pertinent to the store's sales. To investigate and address specific inquiries using SQLite Studio.
+
+# This SQL query retrieves the first name, last name, customer ID, and country of customers from the Chinook database, excluding those from the United States.
+
+SELECT FirstName, LastName, customerID, Country
+FROM chinook.customers
+WHERE Country != 'USA';
+
+# This SQL query retrieves all columns for customers from the Chinook database who are located in Germany.
+
+SELECT *
+FROM chinook.customers
+WHERE Country = 'Germany';
+
+# This SQL query selects specific columns from the 'invoices' table, along with corresponding customer information from the 'customers' table using a LEFT JOIN, specifically for invoices with a billing country of 'Germany' in the Chinook database.
+
+SELECT cus.FirstName, cus.LastName, inv.InvoiceId, inv.InvoiceDate, inv.BillingCountry 
+FROM chinook.invoices as inv
+LEFT JOIN chinook.customers as cus
+ON inv.CustomerId = cus.customerID
+WHERE inv.BillingCountry = 'Germany';
+
+# This SQL query retrieves all columns from the 'employees' table in the Chinook database where the job title is 'Sales Support Agent'.
+
+SELECT *
+FROM chinook.employees
+WHERE Title = 'Sales Support Agent';
+
+# This SQL query extracts distinct values from the 'BillingCountry' column in the 'invoices' table of the Chinook database.
+
+SELECT DISTINCT BillingCountry
+FROM chinook.invoices;
+
+# This SQL query retrieves the first name and last name of employees, along with the invoice ID, by joining the 'employees,' 'customers,' and 'invoices' tables in the Chinook database based on the SupportRepId and CustomerId relationships.
+
+Select emp.FirstName, emp.LastName, inv.InvoiceId
+FROM chinook.employees emp
+JOIN chinook.customers cus ON cus.SupportRepId = emp.EmployeeId 
+JOIN chinook.invoices inv ON inv.CustomerId = cus.customerID;
+
+# This SQL query retrieves the first name, last name, and country of customers, along with the first name, last name, and total invoice amount of employees, by joining the 'employees,' 'customers,' and 'invoices' tables in the Chinook database based on the SupportRepId and CustomerId relationships.
+
+SELECT cus.FirstName, cus.LastName, cus.Country, emp.FirstName, emp.LastName, inv.Total
+FROM chinook.employees emp
+JOIN chinook.customers cus ON cus.SupportRepId = emp.EmployeeId 
+JOIN chinook.invoices inv ON inv.CustomerId = cus.customerID;
+
+# This SQL query counts the number of invoices within the specified date range of January 1, 2009, to December 31, 2009, in the Chinook database.
+
+SELECT COUNT(*) 
+FROM chinook.invoices
+WHERE InvoiceDate BETWEEN "2009-01-01" AND "2009-12-31";
+
+# This SQL query calculates the total sales for the year 2012 by summing the "Total" column from the invoices table in the Chinook database, considering only invoices within the specified date range.
+
+SELECT SUM(Total) AS Sales_2012
+FROM chinook.invoices
+WHERE InvoiceDate BETWEEN "2012-01-01" AND "2012-12-31";
+
+# This SQL query calculates the average sales between the year 2009 to 2011
+
+SELECT AVG(Total) Average_Sales
+FROM chinook.invoices
+WHERE InvoiceDate BETWEEN "2009-01-01" AND "2011-12-31";
+
+# This SQL query retrieves the track name and corresponding invoice line ID by joining the Invoice_items and Tracks tables in the Chinook database.
+
+SELECT t.Name, i.InvoiceLineId
+FROM chinook.Invoice_items i
+JOIN chinook.Tracks t 
+ON i.TrackId = t.TrackId;
+
+# This SQL query selects the track name (as Track), artist name (as Artist), and invoice line ID from the Chinook database by joining the Invoice_items, Tracks, Albums, and Artists tables. It utilizes LEFT JOIN and INNER JOIN operations to connect the relevant information.
+
+SELECT t.Name AS Track, ar.Name AS Artist, i.InvoiceLineId
+FROM chinook.Invoice_items i
+LEFT JOIN chinook.Tracks t ON i.TrackId = t.TrackId
+INNER JOIN chinook.albums a ON a.AlbumId = t.AlbumId
+LEFT JOIN chinook.artists ar ON ar.ArtistID = a.ArtistId;
+
+# This SQL query selects the track name (as 'Track'), album title (as 'Album'), media type name (as 'Media Type'), and genre name (as 'Genre') from the Chinook database. It achieves this by joining the Tracks, Albums, Media_Types, and Genres tables using the relevant keys (AlbumId, MediaTypeId, GenreId).
+
+SELECT t.Name AS 'Track', a.Title AS 'Album', m.Name AS 'Media Type', g.Name AS 'Genre'
+FROM chinook.tracks t
+JOIN chinook.albums a ON a.AlbumId = t.AlbumId 
+JOIN chinook.media_types m ON m.MediaTypeId = t.MediaTypeId
+JOIN chinook.genres g ON g.GenreId = t.GenreId;
+
+# This SQL query selects the first name (as 'FirstName') and last name (as 'LastName') of employees with the title 'Sales Support Agent' from the Chinook database. It also calculates and rounds the total sales (SUM of Invoice.Total) for each employee, displayed as 'Total Sales', by joining the Employees, Customers, and Invoices tables. The results are grouped by the employee's first name.
+
+SELECT emp.FirstName, emp.LastName,
+ROUND(SUM(Inv.Total), 2) as 'Total Sales' 
+
+FROM chinook.employees emp
+JOIN chinook.customers cus ON cus.SupportRepId = emp.EmployeeId 
+JOIN chinook.invoices inv ON inv.CustomerId = cus.customerID
+
+WHERE emp.Title = 'Sales Support Agent' 
+GROUP BY emp.FirstName;
+
+# This SQL query selects the first name (as 'FirstName') and last name (as 'LastName') of employees with the title 'Sales Support Agent' from the Chinook database. It calculates and rounds the total sales (SUM of Invoice.Total) for each employee, displayed as 'Total Sales'. The results are filtered to include only invoices from the year 2012, grouped by the employee's first name, ordered by total sales in descending order, and limited to the top result.
+
+SELECT emp.FirstName, emp.LastName,
+ROUND(SUM(Inv.Total), 2) as 'Total Sales' 
+
+FROM chinook.employees emp
+JOIN chinook.customers cus ON cus.SupportRepId = emp.EmployeeId 
+JOIN chinook.invoices inv ON inv.CustomerId = cus.customerID
+
+WHERE emp.Title = 'Sales Support Agent' 
+AND Inv.InvoiceDate LIKE '2012%' 
+GROUP BY emp.FirstName
+ORDER BY (round(sum(Inv.Total), 2))  DESC LIMIT 1
